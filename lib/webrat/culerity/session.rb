@@ -103,7 +103,7 @@ module Webrat #:nodoc:
       setup unless $setup_done
       unless @_browser
         @_server = ::Culerity::run_server
-        @_browser = ::Culerity::RemoteBrowserProxy.new @_server, {:browser => :firefox}
+        @_browser = ::Culerity::RemoteBrowserProxy.new @_server, {:browser => :firefox, :log_level => :off}
         at_exit do
           @_browser.exit
           @_server.close
