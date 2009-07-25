@@ -36,7 +36,11 @@ module Webrat
       warn("The :sinatra mode is deprecated. Please use :rack instead")
       SinatraAdapter
     when :mechanize
-      MechanizeAdapter
+      MechanizeSession
+    when :rack_test
+      RackTestSession
+    when :culerity
+      CuleritySession
     else
       raise WebratError.new(<<-STR)
 Unknown Webrat mode: #{Webrat.configuration.mode.inspect}
