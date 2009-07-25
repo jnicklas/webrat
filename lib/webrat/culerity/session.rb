@@ -3,9 +3,10 @@ require "forwardable"
 
 module Webrat #:nodoc:
   class CulerityResponse
-    attr_reader :body
+    attr_reader :body, :webrat_session
 
-    def initialize(body)
+    def initialize(session)
+      @webrat_session = session
       @body = body
     end
   end
@@ -19,13 +20,14 @@ module Webrat #:nodoc:
     end
 
     def response
-      CulerityResponse.new(response_body)
+      CulerityResponse.new(self)
     end
 
     def visit(url = nil, http_method = :get, data = {})
       reset
       # TODO querify data
       @current_url = container.goto(absolute_url(url))
+      @response = response # haxx?
     end
 
     webrat_deprecate :visits, :visit
@@ -97,19 +99,31 @@ module Webrat #:nodoc:
     def_delegators :current_scope, :select,        :selects
     def_delegators :current_scope, :uncheck,       :unchecks
 
+    def server
+      unless @_server
+        @_server = ::Culerity::run_server
+        at_exit do
+          @_server.close
+        end
+      end
+      @_server
+    end
+    
+    def browser
+      unless @_browser
+        @_browser = ::Culerity::RemoteBrowserProxy.new server, {:browser => :firefox, :log_level => :off}
+        at_exit do
+          @_browser.exit
+        end
+      end
+      @_browser
+    end
+
   protected
 
     def container
       setup unless $setup_done
-      unless @_browser
-        @_server = ::Culerity::run_server
-        @_browser = ::Culerity::RemoteBrowserProxy.new @_server, {:browser => :firefox, :log_level => :off}
-        at_exit do
-          @_browser.exit
-          @_server.close
-        end
-      end
-      @_browser
+      browser
     end
 
     def absolute_url(url) #:nodoc:

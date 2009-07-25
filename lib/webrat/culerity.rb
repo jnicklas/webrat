@@ -1,6 +1,7 @@
 require "webrat/culerity/session"
 require "webrat/culerity/scope"
 require "webrat/culerity/locator"
+require "webrat/culerity/matchers"
 require "webrat/culerity/core_ext/button"
 require "webrat/culerity/core_ext/container"
 require "webrat/culerity/core_ext/frame"
@@ -62,8 +63,8 @@ end
 module ActionController #:nodoc:
   IntegrationTest.class_eval do
     include Webrat::Methods
-    include Webrat::Matchers
-    include Webrat::HaveTagMatcher
+    include Webrat::Culerity::Matchers
+    include Webrat::Culerity::HaveTagMatcher
     include Webrat::Culerity::Methods
   end
 end
