@@ -58,7 +58,7 @@ module Webrat
 
     def fill_in(id_or_name_or_label, options = {})
       elem = element_locator(id_or_name_or_label, :text_field)
-      elem.set(options[:with])
+      elem.value = options[:with]
     end
 
     webrat_deprecate :fills_in, :fill_in

@@ -9,8 +9,14 @@ module Webrat
 
     def locate
       @how.each do |how|
-        e = @container.send(@element_type, how => @value)
-        return e if e.exists?
+        if how == :label
+          field_id = @container.label(:text, /#{Regexp.escape(@value)}/).for
+          e = @container.send(@element_type, :id => field_id)
+          return e if e.exists?
+        else
+          e = @container.send(@element_type, how => @value)
+          return e if e.exists?
+        end
       end
       nil
     end

@@ -13,6 +13,7 @@ module Webrat #:nodoc:
 
   class CuleritySession #:nodoc:
     extend Forwardable
+    include Webrat::SaveAndOpenPage
 
     attr_reader :current_url
 
